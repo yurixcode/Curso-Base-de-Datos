@@ -1,0 +1,1833 @@
+CURSO PROFESIONAL DE BASE DE DATOS
+
+Conectar desde la terminal en windows:
+	*mysql -u root -p -h localhost
+
+
+Limpiar pantalla:
+	*system clear
+	*system cls (windows)
+
+--
+DECLARAR VARIABLES
+	*SET @<nombre_variable> = 'Hola mundo!';
+
+Otro ejemplo:
+	*@suma = @val1 + @val2;
+
+Otra estructura similar de declarar variables:
+	*SET @variable := 'Hola mundo!';
+
+Declarar n variables en una misma línea:
+	*SET @curso = 'Base de datos', @gestor = 'Mysql';
+
+
+OBTENER VARIABLES
+SELECT @<nombre_variable>;
+
+
+Obteniendo múltiples variables:
+	*SELECT @nombre, @curso, @gestor;
+
+--
+*Las variables solo están disponibles en nuestra sesión...
+--
+
+CREAR BASE DE DATOS
+	CREATE DATABASE <nombre_bd>;
+
+Listar base de datos
+	SHOW DATABASES;
+
+Eliminar BD de forma permanente
+	DROP DATABASE <nombre_bd>;
+
+
+
+
+CREAR TABLAS
+	
+1º Seleccionar una base de datos a utilizar
+	USE <nombre_bd>;
+	*Por default no se utiliza ninguna base de datos
+
+
+2º GENEAR TABLA
+
+EJ: (dónde autores es el nombre de la tabla a crear)
+
+	CREATE TABLE autores(
+    		autor_id INT,
+	    	nombre VARCHAR(25),
+    		apellido VARCHAR(25),
+	    	genero CHAR(1),
+    		fecha_nacimiento DATE,-- DATE va con formato AÑOS-MES-DIA
+    		pais_origen VARCHAR(40)
+	);
+
+
+
+ESCRIBIR COMENTARIO
+	/*
+	para crear un comentario de múltiples líneas
+	*/
+
+Comentario en una línea
+	nombre VARCHAR(50) -- Este sería el comentario
+
+
+
+DECLARANDO COLUMNAS Y TIPO DE DATOS
+	<nombre_columna> VARCHAR(50) -- Aqui aplicamos un límite de 50 carácteres
+
+
+Normalización
+-Identificar los datos compuestos y separarlos de modo que no existan datos duplicados
+
+EJ:
+	ANTES:
+		nombre_y_apellidos VARCHAR(50)
+
+	DESPÚES:
+		nombre VARCHAR(25)
+		apellidos VARCHAR(25)
+
+
+
+
+LISTAR Y ELIMINAR TABLAS
+
+Listar
+	SHOW TABLES;
+
+
+Eliminar
+	DROP TABLE <nombre_tabla>;
+
+
+Conocer la BD actual que estamos operando
+	SELECT DATABASE();
+
+
+
+OBTENER INFORMACIÓN DE UNA TABLA
+	SHOW COLUMNS FROM <nombre_tabla>;
+
+Otra forma de obtener el mismo resultado:
+	DESC <nombre_tabla>;
+
+*DESC es una abreviatura de la sentencia DESCRIBE <nombre_tabla>;
+
+
+
+CREAR TABLAS A PARTIR DE OTRAS
+	CREATE TABLE <nombre_nueva_tabla> LIKE <tabla_base>;
+
+
+
+
+INSERTAR REGISTROS
+Para ello seguiremos la siguiente estructura:
+
+
+	INSERT INTO autores (autor_id, nombre, apellido, genero, fecha_nacimiento, pais_origen)
+	VALUES (1, 'Test autor', 'Test autor', 'M', '2019-01-30', 'México');
+
+	*En INSERT INTO añadimos el nombre de la tabla a la que vamos a añadir los datos y dentro del ()
+	específicamos los datos que añadiremos, no es necesario seleccionar todos ellos...
+
+	*En VALUES, añadimos los datos de forma respectiva a la posición que hemos añadido en INSERT INTO
+
+
+
+LEER REGISTROS DE UNA TABLA
+	SELECT * FROM <nombre_tabla>;
+
+
+
+INSERTAR MÚLTIPLES REGISTROS
+Igual que el proceso anterior, pero pasando tuplas con la información que queremos añadir a la tabla.
+
+	INSERT INTO autores (autor_id, nombre, apellido, genero, fecha_nacimiento, pais_origen)
+	VALUES  (1, 'Nombre autor', 'Apellidos del autor', 'M', '2003-02-27', 'Chile'),
+        	(2, 'Autor 2', 'Apellidos del autor', 'M', '2003-02-27', 'Chile'),
+        	(3, 'Autor 3', 'Apellidos del autor', 'M', '2003-02-27', 'Chile'),
+        	(4, 'Autor 4', 'Apellidos del autor', 'M', '2003-02-27', 'Chile'),
+        	(5, 'Autor 5', 'Apellidos del autor', 'M', '2003-02-27', 'Chile');
+
+
+
+
+EJECUTAR ARCHIVOS .SQL (2 formas)
+
+	DESDE LA TERMINAL
+	mysql -u root -p < C://RUTA_DEL_ARCHIVO/<nombre_archivo>.sql
+
+	DESDE EL TERMINAL MYSQL
+	SOURCE C://RUTA_DEL_ARCHIVO/<nombre_archivo>.sql
+	*Nos dará más información al ejecutar cada sentencia.
+
+Si no especificamos USE <nombre_bd> en el archivo .sql, deberemos hacerlo antes de ejecutar SOURCE...
+
+
+
+CONDICIONAR SENTENCIAS
+
+EJ 1: (en el archivo .sql)
+
+	DROP DATABASE IF EXISTS libreria_cf;
+	CREATE DATABASE IF NOT EXISTS libreria_cf;
+	#El "IF EXISTS" es una condición...
+
+EJ 2:
+	CREATE TABLE IF NOT EXISTS autores(
+    		autor_id INT,
+    		nombre VARCHAR(25)
+	);
+
+Mencionar que aún que falle una de las ejecuciones en el archivo .sql, este seguirá y ejecutará la siguiente
+instrucción...
+
+
+
+CONSULTAS RÁPIDAS
+Ejecutar sentencias sin la necesidad de iniciar sesión con el servidor...
+
+EJ:
+	mysql -u root -p <nombre_bd> -e "SELECT * FROM autores"
+
+Esto lo logramos con el flag -e, dentro de las colmillas, indicamos el comando a ejecutar, sea cuál sea...
+
+
+--
+RESTRICCIONES
+
+
+
+VALORES ÚNICOS Y NULOS
+
+NULOS EJ:
+	CREATE TABLE IF NOT EXISTS autores(
+    		autor_id INT,
+    		nombre VARCHAR(25) NOT NULL,
+    		apellido VARCHAR(25),
+    		genero CHAR(1),
+    		fecha_nacimiento DATE,-- DATE va con formato AÑOS-MES-DIA
+    		pais_origen VARCHAR(40)
+);
+
+
+
+TODOS LOS CAMPOS OBLIGATORIOS
+EJ:
+
+	CREATE TABLE IF NOT EXISTS autores(
+    		autor_id INT NOT NULL,
+    		nombre VARCHAR(25) NOT NULL,
+    		apellido VARCHAR(25) NOT NULL,
+    		genero CHAR(1) NOT NULL,
+    		fecha_nacimiento DATE NOT NULL,-- DATE va con formato AÑOS-MES-DIA
+    		pais_origen VARCHAR(40) NOT NULL
+	);
+
+
+
+
+CAMPO ÚNICO
+EJ:
+
+	CREATE TABLE IF NOT EXISTS autores(
+    		...
+		pseudonimo VARCHAR(50) UNIQUE,
+		...
+	);
+
+
+
+OBTENER LA FECHA Y HORA DEL SERVIDOR
+
+Tenemos 2 opciones:
+	1º	
+	SELECT current_timestamp;
+	#usamos "current_timestamp" en el archivo .sql
+
+	2º
+	SELECT NOW();
+
+
+
+
+VALORES POR DEFAULT
+			Y
+				FECHA Y HORA POR DEFAULT
+
+EJ:
+	CREATE TABLE IF NOT EXISTS autores(
+		nombre VARCHAR(50) DEFAULT 'Este es un nombre por defecto',
+    		...
+    		fecha_creacion DATETIME DEFAULT current_timestamp
+
+		#Como alternativa a DATETIME, usar TIMESTAMP
+);
+
+
+
+NÚMEROS POSITIVOS
+Con unsigned vamos a prevenir la inserción de números negativos...
+
+	CREATE TABLE IF NOT EXISTS autores(
+    		autor_id INT UNSIGNED NOT NULL,
+		...
+	);
+
+
+
+TIPO ENUM
+Enum es una lista de la cuál una columna puede tomar valor...
+
+	CREATE TABLE IF NOT EXISTS autores(
+		...
+    		genero ENUM('M', 'F'), -- M o F,
+	);
+
+Enum es una buena opción cuándo estaremos usando unas pocas opciones, alrededor de 4...
+Se utiliza con opciones que no cambiarán a lo largo del proyecto, como en el ejemplo Masculino o Femenino...
+
+
+
+
+LLAVES PRIMARIAS
+
+*Sólo puede haber una llave primaria
+*No es necesario especificar UNIQUE o NOT NULL
+
+
+	CREATE TABLE IF NOT EXISTS autores(
+    		autor_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+		...
+	);
+
+
+
+
+LLAVES FORÁNEAS
+Las llaves foráneas sirven para hacer referencias entre tablas. Osease, hace referencias a la llave primaria de otra tabla...
+
+EJ:
+
+	CREATE TABLE IF NOT EXISTS autores(
+    		autor_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    		nombre VARCHAR(25) NOT NULL,
+		...
+	);
+
+	
+	CREATE TABLE IF NOT EXISTS libros(
+    		libro_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    		autor_id INT UNSIGNED NOT NULL,
+		...
+    		FOREIGN KEY (autor_id) REFERENCES autores(autor_id)
+	);
+
+
+La llave foránea de un registro, siempre tiene que ser una llave primaria válida
+
+
+LLAVES PRIMARIAS
+
+2 formas de definir un campo como una llave primaria.
+
+
+	EJ 1:
+
+	CREATE TABLE usuarios( 
+  		usuario_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT
+	);
+
+
+	EJ 2:
+
+	CREATE TABLE usuarios( 
+  		usuario_id INT UNSIGNED AUTO_INCREMENT,
+  		PRIMARY KEY(usuario_id)
+	);
+
+
+
+
+VALORES ÚNICOS
+
+Como sabemos, si nosotros necesitamos validar valores únicos usaremos el constraint UNIQUE.
+
+	CREATE TABLE usuarios( 
+  		usuario_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  		nombre VARCHAR(50) UNIQUE
+	);
+
+Otra forma de expresarlo, es de la siguiente manera.
+
+	CREATE TABLE usuarios( 
+  		usuario_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+  		nombre VARCHAR(50),
+  		CONSTRAINT UNIQUE (nombre)
+	);
+
+La palabra CONSTRAINT es opcional, sin embargo, por temas de legibilidad recomiendo colocarla.
+
+
+
+
+5. MODIFICAR TABLAS
+
+AÑADIR COLUMNA
+
+	ALTER TABLE <nombre_tabla> ADD <nombre_columna> INT UNSIGNED NOT NULL;
+
+
+Columna con valor por defecto
+	
+	ALTER TABLE <nombre_tabla> ADD <nombre_columna> INT UNSIGNED NOT NULL 	DEFAULT 10;
+	
+	#Aquí ponemos 10 como valor por defecto...
+
+
+
+Eliminar columna
+	
+	ALTER TABLE <nombre_tabla> DROP COLUMN <nombre_columna>;
+
+
+
+VER DEFINICIÓN DE TABLA
+
+	DESC libros;
+
+
+--
+Modificar el tipo de dato de una columna
+
+Modificar el tipo de dato de la columna teléfono, (tabla usuarios) de INT a VARCHAR, máximo 50 caracteres.
+
+	ALTER TABLE usuarios MODIFY telefono VARCHAR(50);
+
+
+
+Generar una llave primaria.
+Generar una llave primaria a la tabla usuarios.
+
+	ALTER TABLE usuarios ADD id INT UNSIGNED NOT NULL AUTO_INCREMENT, ADD 	PRIMARY KEY (id);
+
+
+
+Agregar llave foránea.
+Agregar una llave foranea a la tabla usuarios, con referencia a la tabla grupos.
+
+	ALTER TABLE usuarios ADD FOREIGN KEY(grupo_id) REFERENCES grupos	(grupo_id);
+
+
+
+Eliminar llaves foráneas
+Eliminar la llave foranea grupo_id de la tabla usuarios.
+
+	ALTER TABLE usuarios DROP FOREIGN KEY grupo_id;
+
+
+--
+
+6. Sentencias básicas
+
+OBTENIENDO REGISTROS EN FORMA DE CARTAS
+	
+	SELECT * FROM libros \G;
+
+
+SELECCIONANDO COLUMNAS
+
+	SELECT libro_id, titulo FROM libros;
+
+
+
+OBTENER REGISTROS MEDIANTE CONDICIONES
+	
+	SELECT * FROM libros WHERE titulo = 'Carrie';
+	SELECT * FROM libros WHERE titulo = 'Titulo del libro 2';
+	
+
+También podemos usar los siguientes operadores relacionales:
+	
+		<, >, <=, >=, =, !=
+
+*El signo != también se puede expresar así <>
+
+
+
+
+OPERADORES LÓGICOS DISPONIBLES
+Podemos agregar n condiciones
+
+				AND, OR y NOT
+
+
+	EJ:
+	SELECT * FROM libros WHERE titulo = 'Carrie' AND libro_id = 1; 
+
+
+	EJ 2:
+	SELECT * FROM libros WHERE titulo = 'Nombre del libro' OR ventas = 1;
+
+
+	EJ 3:
+	SELECT * FROM libros WHERE (autor_id = 1 AND titulo = 'Titulo del libro') 	OR (autor_id = 5 AND titulo = 'El hobbit');
+
+
+
+REGISTROS NULOS
+Un null no representa ningún tipo de dato. Por tanto no podemos tratarlo como un tipo de datos...
+
+
+ENCONTRAR VALRORES NULOS EN LA TABLA
+
+	SELECT * FROM autores WHERE pseudonimo IS NULL; (recomendado)
+O
+	SELECT * FROM autores WHERE pseudonimo IS NOT NULL;
+O
+	SELECT * FROM autores WHERE pseudonimo <=> NULL;
+	<=> Es un operador de 'seguridad' limitando a solo condicionar nulos...
+	también podemos condicionar enteros, flotantes, alfanumericos, entre 	otros.
+
+
+OBTENER REGISTROS MEDIANTE RANGOS
+
+	EJ 1:
+	SELECT titulo, fecha_publicacion FROM libros WHERE fecha_publicacion 			BETWEEN '1995-01-01' AND '2015-01-31';
+
+	EJ 2:
+	SELECT * FROM libros WHERE paginas BETWEEN 100 AND 500;
+
+
+
+REGISTROS ÚNICOS
+
+EJ:
+	En caso existan valores que se repiten en la base de datos, usamos
+	DISTINCT de la siguiente forma para obviarlos:
+	
+	SELECT DISTINCT titulo FROM libros;
+
+
+
+ALIAS
+No son mas que sobrenombres que podemos asignar a tablas, columnas o funciones...
+
+Una vez establecido un alias se dejará a un lado el nombre original.
+
+	EJ 1: (utilizamos AS)
+	SELECT autor_id AS autor, titulo AS nombre FROM libros;
+	
+	EJ 2: (a una tabla)
+	SELECT autor_id AS autor, titulo AS nombre FROM libros AS books;
+	
+	EJ: (indicando el origen)
+	SELECT books.autor_id AS autor, books.titulo AS nombre FROM libros AS 	books;
+
+
+ACTUALIZAR REGISTROS
+
+	EJ 1: (actualizando todos los registros)
+	UPDATE libros SET descripcion = 'Nueva descripción', ventas = 100;
+
+	EJ 2: (condicionando)
+	UPDATE libros SET descripcion = 'Nueva descripción 2', ventas = 250 WHERE 	titulo = 'Titulo del libro 4';
+
+	EJ 3: (recomendada, a través de llave primaria)
+	UPDATE libros SET descripcion = 'Mi nueva descripción', ventas = 7 WHERE
+	libro_id = 7;
+
+
+
+ELIMINAR REGISTROS
+	
+	EJ 1: (eliminar todos los registros de la tabla)
+	DELETE FROM libros;
+
+	EJ 2: (eliminar todos los registros de un autor)
+	DELETE FROM libros WHERE autor_id = 2;
+
+
+
+ELIMINACIÓN EN CASCADA
+
+	EJ 1: (desde la creación de la tabla)
+
+	CREATE TABLE IF NOT EXISTS libros(
+    		libro_id INT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+    		autor_id INT UNSIGNED NOT NULL,
+    		...
+    		FOREIGN KEY (autor_id) REFERENCES autores(autor_id) ON DELETE 				CASCADE
+	);
+
+	
+	EJ 2: (con alter table)
+
+	ALTER TABLE libros ADD FOREIGN KEY (autor_id) REFERENCES autores(autor_id)
+	ON DELETE CASCADE;
+
+
+
+
+RESTAURAR DEFINICIÓN DE UNA TABLA
+Sentencia que nos permite eliminar todos los registros de una tabla de una forma,
+mucho más rápida que la sentencia delete... Esta es TRUNCATE TABLE
+
+La diferencia principal entre truncate y delete es que la primera, no puede ser
+utilizada con la clausula WHERE a diferencia de DELETE.
+
+Además la sentencia truncate, resetea la definición de nuestra tabla... De modo que todo empezará a contar desde 1, la llave primaria por ejemplo...
+
+
+	EJ 1:
+	TRUNCATE TABLE libros;
+
+Otra comparación, es que con DELETE podemos recuperar los datos eliminados, cosa
+que con TRUNCATE es imposible...
+
+USAREMOS TRUNCATE SIEMPRE QUE NECESITEMOS RESETEAR TODOS LOS DATOS DE NUESTRA TABLA...
+
+
+
+
+
+7. FUNCIONES EN SQL
+	
+
+FUNCIONES SOBRE STRINGS
+
+	EJ 1:
+	SELECT CONCAT(nombre, ' ', apellido) FROM autores;
+
+	#Con la anterior sentencia, obtendremos el Nombre y Apellidos en una misma
+	columna...
+
+	EJ 2: (estableciendo alias)
+	SELECT CONCAT(nombre, ' ', apellido) AS nombre_completo FROM autores;
+
+
+
+	FUNCIÓN LENGTH
+	
+	EJ 1:
+	SELECT LENGTH('Hola Mundo')
+
+	Con esta podemos condicionar nuestras búsquedas.
+	EJ:
+	SELECT * FROM autores WHERE LENGTH(nombre) > 7;
+
+
+
+	FUNCIONES DE FORMATO
+	UPPER Y LOWER
+
+	EJ:
+	SELECT UPPER(nombre), LOWER(nombre) FROM autores;
+
+
+
+	TRIM (permite eliminar el prefijo y surfijo, por default son espacios)
+	EJ:
+	SELECT TRIM('    cadena con espacio al inicio y al final      ');
+
+
+
+
+	SUBSTRING
+
+	En el siguiente ejemplo veremos como LEFT nos devuelve una cadena de 5
+	caracteres comenzando de izquieerda a derecha.
+	
+	RIGHT nos devuelve una cadena de 10 caracteres comenzando de derecha a
+	izquierda.
+
+	EJ 1:
+	SELECT LEFT ('Esta es una cadena de caracteres', 5) AS 				substring_izquierdo, RIGHT ('Esta es una cadena de caracteres', 10) AS 			substring_derecho;
+
+	
+	Obteniendo todos los titulos cuyo titulo comience con la palara 'Titulo'
+	EJ 2:
+	SELECT * FROM libros WHERE LEFT (titulo, 6) = 'Titulo';
+
+
+
+FUNCIONES SOBRE NÚMEROS
+
+
+	RAND
+	Generará un número random, entre 0 y 1 (por defecto)
+
+	EJ 1:
+	SELECT RAND();
+
+
+
+	ROUND
+	Redondeará un número flotante
+
+	EJ 1:
+	SELECT ROUND( RAND() * 100 );
+
+
+	
+	TRUNCATE
+	Esta función trunca los números despúes del punto decimal...
+
+	Como segundo argumentos, indicamos el número de decimales que queramos.
+
+	EJ 1:
+	SELECT TRUNCATE(1.122334354, 3);
+
+
+
+	POW() o POWER()
+	Nos retorna el resultado de elavar un número a una potencia.
+
+	EJ 1:
+	SELECT POW(2, 16);
+
+
+
+
+FUNCIONES SOBRE FECHAS
+
+
+	GUARDANDO FECHA EN UNA VARIABLE
+	
+		SET @now = NOW();
+
+
+
+	EXTRAER EL SEGUNDO EXACTO DE LA VARIALE NOW
+
+	EJ:
+	SELECT SECOND(@now),
+	MINUTE(@now),
+	HOUR(@now),
+	MONTH(@now),
+	YEAR(@now);
+
+
+	EXTRAYENDO DATOS CONCRETOS
+
+	EJ:
+	SELECT DAYOFWEEK(@now), DAYOFMONTH(@now), DAYOFYEAR(@now);
+
+
+	
+	CONVERTIR UN TIMESTAMP A TIPO DATE
+
+	EJ:
+	SELECT DATE(@now);
+
+
+	
+	OBTENIENDO TODOS LOS LIBROS PUBLICADOS EL DÍA DE HOY
+	
+	EJ:
+	SELECT * FROM libros WHERE DATE(fecha_creacion) = CURDATE()
+	
+	CURDATE() - Devuelve la fecha actual...
+
+
+
+	AGREGAR O RESTAR TIEMPO A UNA FECHA
+	
+	EJ: (+30 DÍAS)
+	SELECT @now + INTERVAL 30 DAY;
+
+	Fecha operador (+/-) INTERVAL valor TIPO(SECOND, MINUTE, HOUR, DAY, WEEK, 	MONTH, YEAR)
+
+
+
+
+
+FUNCIONES SOBRE CONDICIONES
+
+
+	EJ 1:
+	SELECT IF( 10>9, "El número si es mayor", "El número es menor" );
+
+	Recibe 3 parámetros, la condición, la respuesta en caso sea True y la
+	respuesta en caso sea False...
+
+	
+	EJ 2:
+	SELECT IF(paginas=0, "El libro no posee páginas, paginas") FROM libros;
+
+
+
+	IF NULL
+	Esta recibe 2 argumentos, primero el elemento a evaluar, como segundo
+	argumento devolveremos el dato que queramos en caso la consición se 		cumpla.
+
+	EJ 1:
+	SELECT IFNULL(pseudonimo, "El autor no cuenta con un pseudónimo") FROM 			autores;
+
+
+
+
+	CAMBIANDO EL DELIMITADOR
+	
+	EJ 1: (cambiamos el ; por //, podemos elegir lo que queramos)
+
+	DELIMITER //
+
+
+
+
+	CREAR FUNCIÓN
+	(Habiendo cambiado el delimitador)
+	
+	EJ 1:
+
+	CREATE FUNCTION agregar_dias(fecha DATE, dias INT)
+	RETURNS DATE
+	BEGIN
+    		RETURN fecha + INTERVAL dias DAY;
+	END//
+
+		
+
+	Al inicio no funcionaba, me arrojaba el siguiente error:
+
+	This function has none of DETERMINISTIC, NO SQL,
+	or READS SQL DATA in its declaration and binary logging is enabled
+	(you might want to use the less safe log_bin_trust_function_creators
+	variable)
+
+
+	Ejecuté el siguiente comando para solucionarlo:
+	
+	SET GLOBAL log_bin_trust_function_creators = 1;
+
+
+
+	LLAMAR LA FUNCIÓN
+
+	EJ:
+	SELECT agregar_dias(@now, 60);
+
+
+
+	LISTAR FUNCIONES
+	
+	SHOW FUNCTION STATUS WHERE db = database() AND type = "FUNCTION";
+	
+
+		Los procedimientos:
+		SHOW PROCEDURE STATUS;
+
+		Las funciones:
+		SHOW FUNCTION STATUS;
+
+		Los triggers:
+		SHOW TRIGGERS;
+
+		Los eventos:
+		SHOW EVENTS;
+
+
+
+	ELIMINAR FUNCIONES
+	
+	DROP FUNCTION <nombre_función>
+
+
+
+
+EJECUTAR SENTENCIAS DENTRO DE FUNCIONES
+
+	
+	EJ:
+
+	DELIMITER //
+
+	CREATE FUNCTION obtener_paginas()
+	RETURNS INT
+	BEGIN
+    		SET @paginas = (SELECT ( ROUND( RAND() *100 ) *4 ));
+    	RETURN @paginas;
+	END//
+
+	DELIMITER ;
+
+
+
+UTILIZANDO LA FUNCIÓN CREADA
+	
+	EJ:
+
+	UPDATE libros SET paginas = obtener_paginas();
+
+
+
+
+
+
+8. SENTENCIAS AVANZADAS
+
+
+BÚSQUEDA MEDIANTE STRINGS
+
+	EJ 1:
+	SELECT * FROM libros WHERE titulo LIKE 'Titulo%';
+	
+	El carácter '%' indica que el texto se busque al principio.
+
+	
+	EJ 2:
+	SELECT * FROM libros WHERE titulo LIKE '%4';
+
+	Usaremos '%texto a buscar%' cuándo no sepamos si el texto se encuentra
+	al principio o al final... Buscará en toda la cadena...
+
+
+	EJ 3:
+	SELECT * FROM libros WHERE titulo LIKE '__b___';
+	
+	Como vemos, _ sustituye a un carácter, indicamos que busque 6 carácteres.
+	Y que en el tercer lugar de la palabra, esté la letra 'b'...
+
+
+	EJ 4:
+	SELECT * FROM libros WHERE titulo LIKE '_a__O%';
+
+
+
+EXPRESIONES REGULARES
+
+	EJ 1: (Buscaremos dónde titulo comience con H o L)
+	SELECT titulo FROM libros WHERE titulo REGEXP '^[HL]';
+
+
+
+ORDENAR REGISTROS
+	
+	EJ 1:
+	FROM libros ORDER BY titulo;
+	
+	Por defecto el ordenamiento se hace de forma ascendente...
+	También podemos utilizar ASC; pero no es necesario...
+
+
+	EJ 2:
+	FROM libros ORDER BY titulo DESC;
+	
+	Ordenamos de forma descendente...
+
+
+	EJ 3:
+	SELECT libro_id, titulo FROM libros ORDER BY titulo AND libro_id ASC;
+
+	También podemos separar con ',' en lugar de AND
+
+
+
+LIMITAR REGISTROS
+
+	EJ 1: (Obteniendo los primeros 10 resultados)
+	SELECT titulo * FROM libros LIMIT 10;
+
+	EJ 2: (Obteniendo los primeros 5 libros por el autor #2)
+	SELECT autor_id, titulo FROM libros WHERE autor_id = 2 LIMIT 5;
+
+
+	EJ 3: (ejemplo de paginación...)
+	SELECT libro_id, titulo FROM libros LIMIT 0, 5;
+
+	En el 0, indicamos la posición dónde comienza, y 5 la cantidad de
+	resultados que queremos obtener...
+
+
+
+FUNCIONES DE AGREGACIÓN. ¿QUÉ SON?
+Son funciones que se ejecutan en un grupo de datos. Un grupo de datos no es más
+que el resultado de una consulta...
+
+
+
+FUNCIONES DE AGREGACIÓN
+Existen prácticamente 5 funciones de agregación que podemos encontrar en todos
+los gestores de base de datos...
+
+	COUNT(), MAX(), MIN(), AVG(), SUM()
+
+	
+	EJ 1:
+	SELECT COUNT(*) from autores;
+	Con * indicamos que se cuenten todos los registros
+
+	EJ 2:
+	SELECT COUNT(*) AS total FROM autores WHERE pseudonimo IS NOT NULL;
+
+
+	EJ 3:
+	SELECT COUNT(pseudonimo) AS total FROM autores;
+	
+	Este ejemplo vendría a ser lo mismo que el EJ 2. La función COUNT
+	solamente contará si el valor no es nulo.
+
+
+				SUM
+	EJ 1:
+	SELECT SUM(ventas) FROM libros;
+
+
+				AVG
+	EJ 1:
+	SELECT AVG(ventas) FROM libros;
+
+
+				MAX
+	EJ 1:
+	SELECT MAX(ventas) FROM libros;
+
+
+				MIN
+	EJ 1:
+	SELECT MIN(ventas) FROM libros;
+
+
+
+
+AGRUPAMIENTO
+Usamos GROUP BY para agrupar registros
+
+
+	EJ 1: (conocer la cantidad de ventas total de todos los autores)
+
+	SELECT autor_id, SUM(ventas) FROM libros GROUP BY autor_id;
+
+
+	EJ 2: (obteniendo el autor que más libros ha vendido)
+
+	SELECT autor_id, SUM(ventas) AS total FROM libros GROUP BY autor_id ORDER 		BY total DESC LIMIT 1;
+
+
+
+CONDICIONES BAJO AGRUPAMIENTO
+No podemos usar WHERE con los agrupamientos, así que utilizamos HAVING
+
+	EJ 1:
+	SELECT autor_id, SUM(ventas) AS total FROM libros GROUP BY autor_id HAVING 	SUM(ventas) > 2000;
+
+
+
+
+UNIR RESULTADOS
+Podemos unir resultados en una misma consulta a través de UNION
+Es importante que el número de columnas devueltas sea el mismo en ambas consultas.
+
+	EJ 1:
+
+	SELECT CONCAT(nombre, " ", apellido) AS nombre_completo FROM autores
+	UNION
+	SELECT CONCAT(nombre, " ", apellidos) AS nombre_completo FROM usuarios;
+
+
+
+	EJ 2: (en caso necesitemos una columna que no existe en la otra tabla,
+	podemos añadir una columna vacía para que coincida en número)
+	
+
+	SELECT CONCAT(nombre, " ", apellido) AS nombre_completo, '' FROM autores
+	UNION
+	SELECT CONCAT(nombre, " ", apellidos) AS nombre_completo, email FROM 			usuarios;
+
+
+
+
+
+SUB CONSULTAS
+Para trabajar con subconsultas basta con ponerlo entre paréntesis
+	
+	EJ 1:
+
+	SELECT
+		autor_id
+	FROM libros
+	GROUP BY autor_id
+	HAVING SUM(ventas) > (SELECT AVG(ventas) FROM libros);
+
+
+	EJ 2:
+
+	SELECT CONCAT(nombre, ' ', apellido)
+	FROM autores
+	WHERE autor_id IN(
+    		SELECT
+        		autor_id
+    		FROM libros
+    		GROUP BY autor_id
+    		HAVING SUM(ventas) > (SELECT AVG(ventas) FROM libros)
+	);
+
+
+
+
+VALIDAR REGISTROS
+
+	EJ:
+	SELECT IF(
+    		EXISTS(SELECT libro_id FROM libros WHERE titulo = 'El Hobbit'),
+    		'Disponible',
+    		'No disponible'
+	) AS existencia;
+
+
+
+
+
+
+9. JOINS - Trabajando con múltiples tablas
+
+
+INNER JOIN
+Obtener en un mismo resultado, diferentes valores de diferentes tablas.
+
+
+	EJ 1: (obteniendo el titulo de todos los libros, y el nombre de su autor)
+
+	SELECT
+    		li.titulo,
+    		CONCAT(au.nombre, " ", au.apellido) AS nombre_autor,
+    		li.fecha_creacion
+	FROM libros AS li
+	INNER JOIN autores AS au ON li.autor_id = au.autor_id;
+
+
+
+SUB CLÁUSULA USING
+Debido a que nuestra llave foránea tiene el mismo nombre que nuestra llave
+primaria, podemos utilizar USING en lugar de ON, no es necesario especificar
+a que tabla pertenece este campo ya que se intuye que libros y autores comparten
+dicho campo.
+
+Sin embargo, en la mayoría de las ocasiones, se usará la cláusula ON ya que
+ON nos permite condicionar la UNION de tablas...
+
+	EJ 1:
+	
+	SELECT
+    		libros.titulo,
+    		CONCAT(autores.nombre, " ", autores.apellido) AS nombre_autor,
+    		libros.fecha_creacion
+	FROM libros
+	INNER JOIN autores USING(autor_id);
+
+
+	
+	EJ 2: (condicionando la unión de tablas con ON, esto NO podemos hacerlo
+		con USING)
+	
+	SELECT
+    		li.titulo,
+    		CONCAT(au.nombre, " ", au.apellido) AS nombre_autor,
+    		li.fecha_creacion
+	FROM libros AS li
+	INNER JOIN autores AS au ON li.autor_id = au.autor_id
+                        	AND au.seudonimo IS NOT NULL;
+
+
+
+LEFT JOIN y LEFT OUTER JOIN
+son exactamente lo mismo
+
+El left join nos permite obtener registros de la intersección de ambas tablas,
+tanto como de la tabla A, la tabla A es nuestra tabla principal, la que colocamos
+en el FROM
+
+
+	EJ 1:
+
+	SELECT
+    		CONCAT(nombre, ' ', apellidos),
+    		libros_usuarios.libro_id
+	FROM usuarios
+	LEFT JOIN libros_usuarios ON usuarios.usuario_id libros_usuarios.usuario_id
+	WHERE libros_usuarios.libro_id IS NOT NULL;
+	
+
+
+
+RIGHT JOIN y RIGHT OUTER JOIN
+son exactamente lo mismo
+
+Cuándo usamos RIGHT JOIN, podemos obtener registros de la únion de 2 tablas, 
+los registros pueden encontrarse en la intersección de ambas, como en la tabla B.
+
+
+	EJ 1: (obtenemos un resultado similar el ejemplo de LEFT JOIN, aplicando
+		RIGHT JOIN y cambiando el orden de las tablas)
+	
+	SELECT
+    		CONCAT(nombre, ' ', apellidos),
+    		libros_usuarios.libro_id
+	FROM libros_usuarios
+	RIGHT JOIN usuarios ON usuarios.usuario_id = libros_usuarios.usuario_id;
+
+
+
+MÚLTIPLES JOINS
+Unimos N cantidad de tablas, osea, podemos usar tantos inner, left, right join
+necesitemos...
+
+	EJ:
+	SELECT DISTINCT
+    		CONCAT(usuarios.nombre, ' ', usuarios.apellidos) AS nombre_usuario
+	FROM usuarios
+	INNER JOIN libros_usuarios ON usuarios.usuario_id = 	libros_usuarios.usuario_id
+                    AND DATE(libros_usuarios.fecha_creacion) = CURDATE() 
+	INNER JOIN libros ON libros_usuarios.libro_id = libros.libro_id
+	INNER JOIN autores ON libros.autor_id = autores.autor_id 
+                    AND autores.seudonimo is NOT NULL;
+
+
+
+PRODUCTOS CARTESIANOS
+Es en esencia el resultado de unir múltiples tablas sin especificar ninguna
+condición de unión... 
+
+No es muy común, sin embargo, si necesitamos generar un producto cartesiano, vamos
+a trabajar con CROSS JOIN.
+
+
+	EJ: (generando un producto cartesiano entre usuarios y libros)
+
+	SELECT usuarios.username, libros.titulo FROM usuarios CROSS JOIN libros 	ORDER BY username DESC;
+
+
+Esto nos puede ser muy útil, si es que queremos insertar el resultado anterior,
+a nuestra tabla libros_usuarios.
+
+Si es así, ejecutaremos la siguiente setencia:
+	
+	INSERT INTO libros_usuarios (libro_id, usuario_id) SELECT libro_id, 			usuario_id FROM usuarios CROSS JOIN libros;
+
+
+
+
+10. VISTAS
+Seguridad...
+
+Una vista no es más que un mecanismo que nos permite consultar datos, a diferencia
+de las tablas, en las vistas no se almacenan los datos, por tanto no debemos preocuparnos de que la vista ocupe espacio en memoria.
+
+
+CREAR VISTAS
+Primero generamos la consulta, para posteriormente crear la vista...
+
+Una vez generada la vista, podremos tratarla como una tabla...
+
+
+	EJ:
+	# Para crear usamos la siguiente sentencia, esto hará una nueva "tabla"
+	por eso es importante seguir la convención y añadir <nombre_vista_vw>
+
+	# _vw al final, con tal de identificar la vista de lo que son las tablas.
+	
+	CREATE VIEW prestamos_usuarios_vw AS
+	SELECT
+	...
+
+
+LISTAR VISTAS
+	
+	SHOW TABLES;
+
+ELIMINAR UNA VISTA
+	
+	DROP VIEW <nombre_de_vista_a_eliminar>
+
+
+
+EDITAR VISTAS
+Existen 2 formas de hacerlo.
+
+
+	EJ 1:
+
+	CREATE OR REPLACE VIEW prestamos_usuarios_vw AS
+	SELECT
+	...
+
+
+La segunda forma, básicamente es eliminar la vista, y volverla a crear...
+
+	
+
+
+
+11. PROCEDIMIENTOS ALMACENADOS (stored procedures)
+
+Estos, son rutinas las cuáles se ejecutan directamente en el motor de la base de
+datos... Pueden realizar trabajos sumamente complejos, instrucciones, sentencias,
+flujos de datos, ciclos y muchas cosas más.
+
+Al igual que las funciones estos pueden recibir diferentes tipos de parámetros,
+sin embargo, estos "no retornan" valores. Lo que si retorna es la salida en
+pantalla.
+
+Cada manejador de base de datos, tiene su propia forma de trabajar con los stored
+procedures. Osea, un stored procedures hecho en SQL server no funcionará en MySQL.
+
+
+CREAR PROEDIMIENTOS
+
+	EJ: (en este ejemplo, insertamos un registro/prestámo de libro a la par
+	que reducimos el stock en 1...)
+
+	DELIMITER //
+
+	CREATE PROCEDURE prestamo(usuario_id INT, libro_id INT)
+	BEGIN
+    		INSERT INTO libros_usuarios(libro_id, usuario_id) VALUES(libro_id, 		usuario_id);
+    		UPDATE libros SET stock = stock - 1 WHERE libros.libro_id = 			libro_id;
+	END//
+
+	DELIMITER ;
+
+
+LISTAR STORED PROCEDURE
+
+	EJ:
+	SHOW PROCEDURE STATUS WHERE db=database() AND type = "PROCEDURE"; 
+
+
+EJECUTAR UN STORED PROCEDURE EN MYSQL
+
+	EJ:
+	CALL prestamo(3, 20);
+	#dónde prestámo es el nombre del procedecimiento.
+
+
+ELIMINAR PROCEDIMIENTOS
+
+	EJ:
+	DROP PROCEDURE prestamo;
+
+
+
+OBTENER VALORES
+
+
+	EJ:
+	"""En la declaración del procedure, indicamos con OUT en el parámetro,
+	con ello, estaremos indicando que dicho parámetro, puede ser moficiado Y
+	ser obtenido por el usuario."""
+
+	CREATE PROCEDURE prestamo(usuario_id INT, libro_id INT, OUT cantidad INT)
+	...
+
+
+
+CONDICIONALES
+Sabemos que los stored procedure están pensados para resolver tareas complejas.
+Osea, que contengan condiciones y ciclos...
+
+Como vemos en el siguiente ejemplo usamos IF, ELSE, END IF... TAMBIÉN podemos
+utilizar ELSE IF...
+
+
+
+	EJ 1:
+	
+DELIMITER //
+
+CREATE PROCEDURE prestamo(usuario_id INT, libro_id INT, OUT cantidad INT)
+BEGIN
+    SET cantidad = (SELECT stock FROM libros WHERE libros.libro_id = libro_id);
+
+    IF cantidad > 0 THEN
+        INSERT INTO libros_usuarios(libro_id, usuario_id) VALUES(libro_id, usuario_id);
+        UPDATE libros SET stock = stock - 1 WHERE libros.libro_id = libro_id;
+
+        SET cantidad = cantidad - 1;
+    
+    ELSE
+
+        SELECT "No es posible realizar el prestámo" AS mensaje_error;
+
+    END IF;
+
+END//
+
+DELIMITER ;
+
+
+
+
+CASES (casos)
+Un caso no es más que una o más condiciones...
+
+
+	EJ:
+
+CREATE PROCEDURE tipo_lector(usuario_id INT)
+BEGIN
+    SET @cantidad = (SELECT COUNT(*) FROM libros_usuarios
+                    WHERE libros_usuarios.usuario_id = usuario_id);
+
+    CASE
+        WHEN @cantidad >= 20 THEN
+            SELECT "FANATICO" AS mensaje;
+
+        WHEN @cantidad >= 10 AND @cantidad < 20 THEN
+            SELECT "AFICIONADO" AS mensaje;
+
+        WHEN @cantidad > 5 AND @cantidad < 10 THEN
+            SELECT "PROMEDIO" AS mensaje;
+
+        ELSE
+            SELECT "NUEVO" AS mensaje;
+
+    END CASE;
+
+END//
+
+
+
+CICLOS
+En MySQL tenemos 2 tipos de ciclos, WHILE DO y AND REPEAT
+
+
+
+	EJ: WHILE DO
+	
+DELIMITER //
+
+CREATE PROCEDURE libros_azar()
+BEGIN
+    SET @iteracion = 0;
+
+    WHILE @iteracion < 5 DO
+
+        SELECT libro_id, titulo FROM libros ORDER BY RAND() LIMIT 1;
+        SET @iteracion = @iteracion + 1;
+
+    END WHILE;
+
+END//
+
+DELIMITER ;
+
+
+
+
+	EJ: REPEAT
+	(a contrario del while, repet se ejecutará hasta que la
+	condición sea verdadera... Declarado en UNTIL AL FINALIZAR...)
+
+DELIMITER //
+
+CREATE PROCEDURE libros_azar()
+BEGIN
+    SET @iteracion = 0;
+
+    REPEAT
+
+        SELECT libro_id, titulo FROM libros ORDER BY RAND() LIMIT 1;
+        SET @iteracion = @iteracion + 1;
+
+        UNTIL  @iteracion >= 5
+    END REPEAT;
+
+END//
+
+DELIMITER ;
+	
+
+
+
+12. TRANSACCIONES
+
+BLOQUEO DE TABLAS
+Existen 2 tipos de bloqueos (mysql), una es en consulta a la bd, y la otra en
+escritura...
+
+
+TRANSACCIONES
+Podemos definirlo como el mecanismo que nos permite agrupar N cantidad de sentencias SQL en una sola, de modo que todas o ninguna de las sentencias tenga éxito... (atomicidad)
+
+Utilizarlas nos permite poder afectar a la bd de una forma segura, en una transacción podemos definir 3 estados, un antes, un durante y un después de la transacción...
+
+Durante la transacción los cambios realizados pueden ser revertidos, dejango a la
+base de datos en su estado inicial.
+
+
+Tan solo usaremos las transacciones cuándo necesitemos en todas las sentencias se cumplan, caso falle 1, los cambios no se realizarán...
+
+
+IMPLEMENTAR TRANSACCIONES
+
+	EJ:
+	"""Para ello indicamos que estamos iniciando una transacción, y poste-
+	riormente insertamos todas las consultas, inserciones que necesitemos...
+	Si todo ha salido bien, al finalizar y para persistir los cambios.
+	Ejecutamos COMMIT;"""
+
+	START TRANSACTION;
+	...
+	COMMIT;
+
+
+REVIRTIENDO CAMBIOS
+
+	ROLLBACK;
+
+	Si tras ejecutar las transacciones, alguna de ellas ha fallado, en lugar,
+	de hacer COMMIT, ejecutaremos ROLLBACK; con tal de revertir los cambios,
+	y que estos no se persistan...
+
+
+
+
+TRANSACCIONES Y STORE PROCEDURES
+En la mayoría de las ocasiones, implementaremos transacciones dentro de los stored
+procedures
+
+
+	EJ de uso:
+	"""Básicamente declaramos que si sucede algún error, sea cuál sea la
+	setencia, que ejecute el codigo entre BEGIN y END;
+
+	Este será un ROLLBACK; con tal de revertir los cambios..."""
+
+
+DELIMITER //
+
+CREATE PROCEDURE prestamo(usuario_id INT, libro_id INT)
+
+BEGIN
+
+    DECLARE EXIT HANDLER FOR SQLEXCEPTION -- Ocurre un error
+    BEGIN
+        ROLLBACK;
+    END;
+    
+    START TRANSACTION;
+        INSERT INTO libros_usuarios(libro_id, usuario_id) VALUES(libro_id, usuario_id);
+        UPDATE libros SET stock = stock - 1 WHERE libros.libro_id = libro_id;
+    COMMIT;
+
+END//
+
+DELIMITER ;
+
+	
+
+
+
+
+MOTORES DE ALMACENAMIENTO
+Un motor de almacenamiento es el encargado de almacenar, gestionar y recuperar toda la información de una tabla.
+
+
+VER MOTORES DE ALMACENAMIENTO DISPONIBLES
+	
+	SHOW ENGINES;
+
+
+
+Algo interesante a mencionar sobre InnoDB es que este motor realiza un bloqueo total sobre un tabla cuando es ejecutada una se las siguientes sentencias.
+
+Select
+Insert
+Update
+Delete
+
+Si deseamos trabajar con transacción y la integridad de los datos sea crucial nuestra mejor opción será InnoDB, por otro lado, sí lo que deseamos es una mayor rapidez al momento de obtener información será necesario utilizar MyISAM.
+
+
+--
+
+
+GESTIÓN
+Si nosotros así lo deseamos podemos cambiar el motor de almacenamiento. Existen dos formas de hacer esto. La primera, es modificar el archivo my.cnf.
+
+[mysqld]
+default-storage-engine = innodb
+La segunda forma es hacerlo directamente desde nuestra sección, basta con ejecutar la siguiente sentencia.
+
+SET storage_engine=INNODB;
+En ambos casos modificamos el motor de almacenamiento de MyISAM a InnoDB.
+
+
+
+
+Si nosotros deseamos conocer qué motor de almacenamiento utiliza una tabla en particular, podemos hacerlo ejecutando la siguiente sentencia.
+
+SHOW TABLE STATUS WHERE `Name` = 'tabla' \G;
+Si deseamos crear una tabla utilizando un motor en particular, debemos seguir la siguiente estructura.
+
+CREATE TABLE tabla_innodb (id int, value int) ENGINE=INNODB;
+CREATE TABLE tabla_myisam (id int, value int) ENGINE=MYISAM;
+CREATE TABLE tabla_default (id int, value int);
+
+
+
+
+
+
+
+EVENTOS MYSQL
+
+A partir de la versión 5.1, MySQL añade el concepto de eventos. Un evento no es más que una tarea la cual se ejecuta de forma automática en un momento previamente programado. Si eres un usuarios Linux puedes ver a los eventos cómo los cron jobs .
+
+
+
+EJEMPLOS
+Para este tutorial me apoyaré de mi tabla test.
+
+CREATE TABLE test(
+ evento VARCHAR(50),
+ fecha DATETIME 
+); 
+Lo primero que debemos de hacer es habilitar nuestro servidor para que pueda ejecutar eventos.
+
+SET GLOBAL event_scheduler = ON;
+Posteriormente creamos nuestro evento; En mi caso, tendrá el nombre de insertion event. Este evento se ejecutará dentro de 1 min, y lo que hará, será insertar un registro en mi tabla.
+
+CREATE EVENT insertion_event
+ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
+DO INSERT INTO test VALUES ('Evento 1', NOW());
+El nombre del evento no debe de poseer más de 64 caracteres.
+
+Si queremos que el evento se ejecute en una fecha en concreto, únicamente debemos de especificarlo en ON SCHEDULE AT. Recuerda, el formato es año-mes-día hora:minuto:segundo.
+
+ON SCHEDULE AT '2018-12-31 12:00:00'
+Si nuestro evento ejecutará más de una sentencia SQL debemos de apoyarnos de BEGIN y END.
+
+DELIMITER //
+
+CREATE EVENT insertion_event
+ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
+DO
+BEGIN
+ INSERT INTO test VALUES ('Evento 1', NOW());
+ INSERT INTO test VALUES ('Evento 2', NOW());
+ INSERT INTO test VALUES ('Evento 3', NOW());
+END //
+
+DELIMITER ;
+Una vez el evento se haya creado, nosotros podemos listarlo.
+
+SHOW events\G;
+Si queremos eliminar un evento haremos uso de DROP.
+
+DROP EVENT nombre_evento;
+Es importante mencionar que una vez el evento haya expirado, este, será eliminado de forma automática. Si nosotros no queremos que esto ocurra debemos de apoyarnos de ON COMPLETION
+
+ON SCHEDULE AT CURRENT_TIMESTAMP + INTERVAL 1 MINUTE
+ON COMPLETION PRESERVE
+...
+Algo común con los eventos es trabajar con store procedures.
+
+CREATE EVENT nombre_evento
+ON SCHEDULE AT 'fecha de ejeución' 
+DO
+CALL store_procedure();
+
+
+TAMBIÉN TENEMOS EVENTOS PERIÓDICOS.... Más ejemplos en GITHUB
+
+
+
+
+
+
+
+
+RESPALDO DE INFORMACIÓN
+En MySQL nosotros podemos realizar respaldos de nuestra información, para ello, utilizaremos la aplicación mysqldump.
+
+Si queremos realizar el respaldo de una sola base de datos ejecutaremos el siguiente comando en nuestra terminal.
+
+mysqldump base_de_datos > ruta/archivo_respaldo.sql
+Si lo que necesitamos es realizar el respaldo de múltiples base de datos, modificaremos nuestro comando, agregando --databases.
+
+mysqldump --databases db1 db2 db3 > ruta/archivo_respaldo.sql
+Separaremos las base de datos mediante un espacio.
+
+Si lo que necesitamos es realizar el respaldo de una o múltiples tablas el comando será el siguiente
+
+Para una sola tabla
+
+mysqldump base_de_datos tabla1 > ruta/archivo_respaldo.sql
+Para múltiples tablas
+
+mysqldump base_de_datos tabla1 tabla3 > ruta/archivo_respaldo.sql
+
+
+
+
+
+
+AGREGAR NUEVOS USUARIOS
+Para que nosotros generemos un nuevo usuario lo primero que debemos de hacer es autenticarnos en el servidor.
+
+mysql -u root -p -h localhost<ip>
+Posteriormente debemos de generar un nuevo Usuario, Para esto ejecutamos las siguiente sentencia.
+
+CREATE USER 'usuario'@'localhost' IDENTIFIED BY 'password';
+Hasta este punto, nosotros ya podemos autenticarnos con el servidor utilizando el nuevo usuario, sin embargo, una vez autenticado las acciones que podemos hacer son mínimas, debido a que este usuario no posee los permisos necesarios para trabajar con las bases de datos.
+
+ASIGNAR PERMISOS
+Para poder establecer permisos, las siguiente sentencias deben de ejecutarse utilizando el usuario root.
+
+Si queremos que el nuevo usuario tenga permisos de administrador (Todos los permisos), debemos de ejecutar la siguiente sentencia.
+
+GRANT ALL PRIVILEGES ON *.* TO 'nombre_usuario'@'localhost';
+Los asteriscos indican que los permisos serán asignados a todas las bases de datos y a todas las tablas (primer asteriscos bases de datos, segundo asterisco tablas).
+
+Si queremos asignar permisos para ciertas acciones, la sentencia quedaría de la siguiente manera. Reemplazamos ALL PRIVILEGES y colocamos las acciones que queremos asignar.
+
+GRANT SELECT, INSERT, UPDATE, DELETE, CREATE, DROP
+    -> ON codigofacilito.*
+    -> TO 'nombre_usuario'@'localhost';
+En esta ocasión estamos indicando que el nuevo usuario podrá consultar, crear, actualizar y eliminar registros, así cómo podrá crear o eliminar elementos (tablas, índices, columnas, funciones, stores, etc ...).
+
+Todos estos permisos serán válidos únicamente en la base de datos codigofacilito y se aplicarán a todas las tablas.
+
+Si queremos asignar permisos únicamente a una tabla, reemplazamos el asteriscos por el nombre de la tabla.
+
+ejemplo codigofacilito.usuarios
+
+Una vez hayamos finalizado con los permisos, el último paso será refrescarlos.
+
+FLUSH PRIVILEGES;
+PERMISOS
+Aquí un listado de algunos permisos que podemos asignar.
+
+CREATE permite crear nuevas tablas o bases de datos.
+DROP permite eliminar tablas o bases de datos.
+DELETE permite eliminar registros de tablas.
+INSERT permite insertar registros en tablas.
+SELECT permite leer registros en las tablas.
+UPDATE permite actualizar registros en las tablas.
+GRANT OPTION permite remover permisos de usuarios.
+SHOW DATABASE Permite listar las bases de datos existentes.
+SENTENCIAS A TENER EN CUENTA
+Listado de todos los usuarios.
+
+SELECT User FROM mysql.user;
+Eliminar un usuario.
+
+DROP USER 'usuario'@'localhost';
+Remover permisos en concreto (Ejemplo update y delete).
+
+REVOKE UPDATE, DELETE ON *.* FROM 'usuario'@'localhost';
+Remover todos los privilegios.
+
+REVOKE ALL PRIVILEGES ON *.* FROM 'usuario'@'localhost';
+
+
+
+
+TRIGGER
+
+BEFORE INSERT Acciones a realizar antes de insertar uno más o registros en una tabla.
+
+AFTER INSERT Acciones a realizar después de insertar uno más o registros en una tabla.
+
+BEFORE UPDATE Acciones a realizar antes de actualizar uno más o registros en una tabla.
+
+AFTER UPDATE Acciones a realizar después de actualizar uno más o registros en una tabla.
+
+BEFORE DELETE Acciones a realizar antes de eliminar uno más o registros en una tabla.
+
+AFTER DELETE Acciones a realizar después de eliminar uno más o registros en una tabla.
+
+
+
+
+CREANDO TRIGGER
+
+	EJ: (UTILIZAMOS NEW)
+
+DELIMITER //
+
+CREATE TRIGGER after_insert_update_books
+AFTER INSERT ON libros
+FOR EACH ROW
+BEGIN
+    UPDATE autores SET cantidad_libros = cantidad_libros + 1 WHERE autor_id = 	NEW.autor_id;
+END;
+//
+
+DELIMITER ;
+
+
+--
+
+
+EVENTO DELETE
+
+	EJ: (UTILIZAMOS OLD)
+
+
+DELIMITER //
+
+CREATE TRIGGER after_delete_update_books
+AFTER DELETE ON libros
+FOR EACH ROW
+BEGIN
+    UPDATE autores SET cantidad_libros = cantidad_libros - 1 WHERE autor_id = OLD.autor_id;
+
+END;
+//
+
+DELIMITER ;
+
+
+--
+
+
+EVENTO UPDATE
+
+	EJ:
+
+DELIMITER //
+
+CREATE TRIGGER after_update_books
+AFTER UPDATE ON libros
+FOR EACH ROW
+BEGIN
+    IF(NEW.autor_id != OLD.autor_id) THEN
+        UPDATE autores SET cantidad_libros = cantidad_libros + 1 WHERE autor_id = 	NEW.autor_id;
+        UPDATE autores SET cantidad_libros = cantidad_libros - 1 WHERE autor_id = 	OLD.autor_id;
+        
+    END IF;
+END;
+//
+
+DELIMITER ;
+
+
+--
+
+
+
+LISTADO Y ELIMINACIÓN DE TRIGGERS
+
+	SHOW TRIGGERS; (Se muestra únicamente los trigger de la bd que se utiliza)
+
+
+ELIMINAR TRIGGERS
+
+	DROP TRIGGER libreria_cf.after_delete_update_books;
+
+	# Dónde libreria_cf es el nombre de la base de datos...
+
+
+
+
+
+
